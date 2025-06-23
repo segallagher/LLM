@@ -1,0 +1,7 @@
+## Byte Pair encoding ##
+
+unique tokens after # merges
+0: 109
+10: 120
+100: 972
+1000: 11310
