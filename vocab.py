@@ -62,6 +62,7 @@ def build_vocab(data: list[str], target_vocab_size:int=1000):
         pairs: dict [tuple, int] = get_stats(vocab)
 
         # THIS COULD/SHOULD BE OPTIMIZED
+        # KNOWN BUG IF VOCAB IS TOO HIGH FILTERED_PAIRS MIGHT BE EMPTY
         # Filter pairs
         filtered_pairs = {key: value for key, value in pairs.items() if is_valid_pair(key)}
 

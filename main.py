@@ -5,9 +5,8 @@ import os
 
 import pandas as pd
 import numpy as np
-import torch
-from torch.utils.data import random_split
 from sklearn.model_selection import train_test_split
+import torch
 
 from vocab import create_vocab
 from util import tokens_to_ids, greedy_tokenize
@@ -23,7 +22,6 @@ RANDOM_SEED = None
 VOCAB_PATH = "vocab.json"
 RAW_DATA_PATH = "data/raw"
 PROCESSED_DATA_PATH = "data/processed"
-DATA_PATH = "data.csv"
 INSTRUCTION = "Answer this question truthfully"
 
 if GENERATE_TOKENIZED_DATA:
@@ -35,7 +33,7 @@ if GENERATE_TOKENIZED_DATA:
     dataset.replace("", np.nan, inplace=True)
     dataset.dropna(inplace=True)
     # Drop useless columns
-    dataset.drop(["instruction"], axis=1)
+    dataset.drop(["instruction"], axis=1, inplace=True)
 
     # Split dataset
     # Use train_test_split twice to split into train, val, and test
@@ -74,14 +72,11 @@ if GENERATE_TOKENIZED_DATA:
 
         # Save processed split data
         os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
-        split.to_csv(Path(PROCESSED_DATA_PATH) / DATA_PATH)
+        split.to_csv(Path(PROCESSED_DATA_PATH) / f"{split_name}.csv")
 
     end_time = datetime.now()
     print("Total processing time: ", end_time-start_time)
 
-    # # Save data for future runs
-    # os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
-    # dataset.to_csv(Path(PROCESSED_DATA_PATH) / DATA_PATH)
 else:
     # Load Vocab
     try:
@@ -93,12 +88,14 @@ else:
     # Load pre processed train, val, and test data splits
     try: 
         # Read dataset from csv, data should have been previously generated
-        dataset = pd.read_csv(Path(PROCESSED_DATA_PATH) / DATA_PATH)
+        train_df = pd.read_csv(Path(PROCESSED_DATA_PATH) / "train.csv")
+        val_df = pd.read_csv(Path(PROCESSED_DATA_PATH) / "val.csv")
+        test_df = pd.read_csv(Path(PROCESSED_DATA_PATH) / "test.csv")
     except Exception as e:
         raise Exception(f"Error loading dataset: ", e)
     
-print(dataset[["input", "input_ids"]])
-print(dataset[["output", "output_ids"]])
+print(train_df[["input", "input_ids"]])
+print(train_df[["output", "output_ids"]])
 
 
 
