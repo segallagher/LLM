@@ -90,16 +90,17 @@ def create_token_id_map(token_set:set):
         token_ids[token] = idx
     return token_ids
 
-def create_vocab(dataset_path: str, target_vocab_size: int, vocab_path: str) -> None:
+# Create vocab given a dataset which is a DataFrame or a pytorch SubSet, a target vocab size, and a path to output
+def create_vocab(dataset: pd.DataFrame, target_vocab_size: int, vocab_output_path: str) -> None:
 
-    dataset = pd.read_json(dataset_path)
+    merged_dataset_list = dataset["input"].to_list() + dataset["output"].to_list()
 
     # Build Vocabulary
-    vocab = build_vocab(data=dataset["input"].to_list(), target_vocab_size=target_vocab_size)
+    vocab = build_vocab(data=merged_dataset_list, target_vocab_size=target_vocab_size)
 
     token_set = find_unique_tokens(vocab)
 
     vocab = create_token_id_map(token_set)
 
-    with open(vocab_path, 'w') as f:
+    with open(vocab_output_path, 'w') as f:
         json.dump(vocab, f)

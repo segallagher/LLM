@@ -3,3 +3,4 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 
 # Install Deps
 pip3 install pandas
+pip3 install scikit-learn
